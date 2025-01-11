@@ -1,5 +1,9 @@
 import express, { Request, Response } from "express";
 import userRouter from "./module/user/user.router";
+import {
+  errorRouteHandler,
+  globalErrorHandler
+} from "./utils/globalErrorHandler";
 
 const app = express();
 app.use(express.json());
@@ -12,10 +16,8 @@ app.get("/health", (req: Request, res: Response) => {
   });
 });
 
-app.use((error: Error, req: Request, res: Response) => {
-  res.status(500).send({
-    success: false,
-    message: error.message
-  });
-});
+// 404 route handler
+app.use(errorRouteHandler);
+app.use(globalErrorHandler);
+
 export default app;
