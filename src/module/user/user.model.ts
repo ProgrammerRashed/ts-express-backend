@@ -1,47 +1,56 @@
-import { model, Schema } from "mongoose";
+import { model, Schema } from 'mongoose'
+import { IUser } from './user.interface'
 
-//USER ROLE ENUM
-enum UserRole {
-  ADMIN = "ADMIN",
-  USER = "USER"
-}
-const userSchema = new Schema({
+const userSchema = new Schema<IUser>({
   name: {
     type: String,
-    required: true
+    required: [true, 'Please provide your name'],
+    minlength: 3,
+    maxlength: 50,
   },
+  age: { type: Number, required: [true, 'Please enter your age'] },
   email: {
     type: String,
-    required: true,
+    required: [true, 'Please provide your email'],
     unique: true,
     validate: {
       validator: function (value: string) {
-        return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
+        return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(value)
       },
-      message: "Please enter a valid email address!"
-    }
+      message: '{VALUE} is not a valid email',
+    },
+    immutable: true,
   },
-  age: {
-    type: Number,
-    required: true
-  },
-  photo: { String },
+  photo: String,
   role: {
     type: String,
-    enum: Object.values(UserRole),
+    enum: {
+      values: ['user', 'admin'],
+      message: '{VALUE} is not valid, please provide a valid role',
+    },
+    default: 'user',
     required: true,
-    default: UserRole.USER
   },
   userStatus: {
     type: String,
-    enum: ["active", "inactive"],
-    default: "active",
-    required: true
+    enum: ['active', 'inactive'],
+    required: true,
+    default: 'active',
   },
-  password: {
-    type: String,
-    required: true
-  }
-});
-const User = model("User", userSchema);
-export default User;
+})
+
+// hook -> pre
+// userSchema.pre('find', function (this, next) {
+//   this.find({ userStatus: { $eq: 'active' } })
+//   next()
+// })
+
+// userSchema.post('find', function (docs, next) {
+//   docs.forEach((doc: IUser) => {
+//     doc.name = doc.name.toUpperCase()
+//   })
+//   next()
+// })
+
+const User = model<IUser>('User', userSchema)
+export default User

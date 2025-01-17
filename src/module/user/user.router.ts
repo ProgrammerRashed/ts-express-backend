@@ -1,14 +1,23 @@
-import { Router } from "express";
-import { userController } from "./user.controller";
+import { NextFunction, Request, Response, Router } from 'express'
+import { userController } from './user.controller'
+import { UserValidation } from './userValidation'
 
-const userRouter = Router();
-// ALL READ ROUTES
-userRouter.get("/users", userController.getAllUser);
-userRouter.get("/users/:id", userController.getUser);
-// ALL WRITE ROUTES
-userRouter.put("/users/:id", userController.updateUser);
-userRouter.delete("/users/:id", userController.deleteUser);
-// REGISTER ROUTE
-userRouter.post("/register", userController.createUser);
+const userRouter = Router()
 
-export default userRouter;
+userRouter.post('/create-user', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        console.log({ body: req.body });
+        const parsedBody = await UserValidation.userValidationSchema.parseAsync(req.body)
+        req.body = parsedBody
+        console.log({ parsedBody });
+        next()
+    } catch (error) {
+        next(error)
+    }
+}, userController.createUser)
+userRouter.get('/:userId', userController.getSingleUser)
+userRouter.put('/:userId', userController.updateUser)
+userRouter.delete('/:userId', userController.deleteUser)
+userRouter.get('/', userController.getUser)
+
+export default userRouter

@@ -1,12 +1,19 @@
-import { Response } from "express";
-import { ISendResponse } from "../interfaces/interfaces";
+import { Response } from 'express'
 
-const sendResponse = <T>(res: Response, data: ISendResponse<T>) => {
+type TSuccessResponse<T> = {
+  status?: boolean
+  statusCode: number
+  message: string
+  data: T | T[] | null
+}
+
+const sendResponse = <T>(res: Response, data: TSuccessResponse<T>) => {
   res.status(data.statusCode).json({
-    success: data.success,
+    status: true,
+    statusCode: data.statusCode,
     message: data.message,
-    data: data.data
-  });
-};
+    data: data.data,
+  })
+}
 
-export default sendResponse;
+export default sendResponse
