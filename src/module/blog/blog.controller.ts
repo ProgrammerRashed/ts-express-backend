@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
-import { tourService } from './tour.service'
+import { blogServices } from './blog.service'
 
-const createTour = async (req: Request, res: Response) => {
+const createBlog = async (req: Request, res: Response) => {
   try {
     const body = req.body
-    const result = await tourService.createTour(body)
+    const result = await blogServices.createBlog(body)
 
     res.send({
       success: true,
@@ -20,9 +20,9 @@ const createTour = async (req: Request, res: Response) => {
   }
 }
 
-const getTours = async (req: Request, res: Response) => {
+const getBlogs = async (req: Request, res: Response) => {
   try {
-    const result = await tourService.getTours(req.query)
+    const result = await blogServices.getBlogs(req.query)
 
     res.send({
       success: true,
@@ -38,10 +38,10 @@ const getTours = async (req: Request, res: Response) => {
   }
 }
 
-const getSingleTour = async (req: Request, res: Response) => {
+const getSingleBlog = async (req: Request, res: Response) => {
   try {
     const id = req.params.id
-    const result = await tourService.getSingleTour(id)
+    const result = await blogServices.getSingleBlog(id)
 
     res.send({
       success: true,
@@ -57,11 +57,11 @@ const getSingleTour = async (req: Request, res: Response) => {
   }
 }
 
-const updateTour = async (req: Request, res: Response) => {
+const updateBlog = async (req: Request, res: Response) => {
   try {
     const id = req.params.id
     const body = req.body
-    const result = await tourService.updateTour(id, body)
+    const result = await blogServices.updateBlog(id, body)
 
     res.send({
       success: true,
@@ -76,10 +76,10 @@ const updateTour = async (req: Request, res: Response) => {
     })
   }
 }
-const deleteTour = async (req: Request, res: Response) => {
+const deleteBlog = async (req: Request, res: Response) => {
   try {
     const id = req.params.id
-    const result = await tourService.deleteTour(id)
+    const result = await blogServices.deleteBlog(id)
 
     res.send({
       success: true,
@@ -95,10 +95,10 @@ const deleteTour = async (req: Request, res: Response) => {
   }
 }
 
-export const tourController = {
-  createTour,
-  getTours,
-  getSingleTour,
-  updateTour,
-  deleteTour,
+export const blogController = {
+  createBlog,
+  getBlogs,
+  getSingleBlog,
+  updateBlog,
+  deleteBlog,
 }

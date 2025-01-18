@@ -1,9 +1,9 @@
 
 import express, { Request, Response } from 'express'
 import { globalErrorHandler } from './middlewares/globalErrorHandler'
-import tourRouter from './module/tour/tour.route'
 import userRouter from './module/user/user.router'
 import authRouter from './module/auth/auth.router'
+import blogRouter from './module/blog/blog.route'
 
 const app = express()
 
@@ -12,7 +12,7 @@ app.use(express.json())
 
 app.use('/api/auth', authRouter)
 app.use('/api/user', userRouter)
-app.use('/api/tour', tourRouter)
+app.use('/api/blog', blogRouter)
 
 app.get('/', (req: Request, res: Response) => {
   res.send({
