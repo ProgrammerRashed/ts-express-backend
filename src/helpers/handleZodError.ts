@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Response } from "express";
+import { StatusCodes } from "http-status-codes";
+import config from "../config";
 
 
 export const handlerZodError = (err: any, res: Response) => {
@@ -10,11 +12,15 @@ export const handlerZodError = (err: any, res: Response) => {
         }
     });
 
-    res.status(400).json({
-        success: false,
-        message: err.message,
-        issues: issues,
-        error: err
-    })
+  res.status(StatusCodes.BAD_REQUEST).json({
+         success: false,
+         message: err.message,
+         statusCode: StatusCodes.BAD_REQUEST,
+         error: {
+             issues, err
+         },
+         stack: config.nodeEnv === "development" ? err.stack : null,
+     })
+ 
 
 }

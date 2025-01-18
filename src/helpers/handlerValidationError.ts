@@ -1,4 +1,6 @@
 import { Response } from "express";
+import { StatusCodes } from "http-status-codes";
+import config from "../config";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const handleValidationError = (err: any, res: Response) => {
@@ -10,11 +12,16 @@ export const handleValidationError = (err: any, res: Response) => {
         }
     });
 
-    res.status(400).json({
+
+    res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message: err.message,
-        issues: issues,
-        error: err
+        statusCode: StatusCodes.BAD_REQUEST,
+        error: {
+            issues, err
+        },
+        stack: config.nodeEnv === "development" ? err.stack : null,
     })
 
+    
 }

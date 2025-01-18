@@ -1,10 +1,7 @@
 import { Response } from "express";
+import sendErrorResponse from "../utils/sendErrorResponse";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const handleCastError = (err: any, res: Response) => {
-    res.status(400).json({
-        success: false,
-        message: err.message,
-        error: err
-    })
+    sendErrorResponse(res, err)
 }

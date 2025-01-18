@@ -8,18 +8,8 @@ import { handleGenericError } from "../helpers/handleGenericError"
 import { handleValidationError } from "../helpers/handlerValidationError"
 import { handlerZodError } from "../helpers/handleZodError"
 
-//Error:
-//Generic Error  - Done
-//1.Duplicate - Done
-//2. Validation - DOne
-//3. Cast Error - Type Casting Error - Done
-//4. Zod Error / Joi
 
-type TErrorResponse = {
-    success: boolean
-    message: string
-    error: any
-}
+
 
 export const globalErrorHandler = (err: any, req: Request, res: Response, _next: NextFunction) => {
     if (err.name && err.name === "ZodError") {
@@ -38,18 +28,3 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, _next:
         handleGenericError(err, res)
     }
 }
-
-
-
-
-// Error - string = err.message
-// Error - Customize - Array, Object, String - JS Error
-
-/**
- * JS COde
- * 
- * error - JS Error -> customize -> new pattern of Error
- * 
- * any error is a instance of Error Class of JS
- * 
- */

@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Response } from "express";
-import { StatusCodes } from "http-status-codes";
+import sendErrorResponse from "../utils/sendErrorResponse";
 
 export const handleGenericError = (err: any, res: Response) => {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        message: err.message,
-        error: err
-    })
+    sendErrorResponse(res, err)
+   
 }
