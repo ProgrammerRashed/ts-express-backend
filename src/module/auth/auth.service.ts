@@ -1,11 +1,32 @@
+import config from '../../config'
 import { IUser } from '../user/user.interface'
 import User from '../user/user.model'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
 const register = async (payload: IUser) => {
-  const result = await User.create(payload)
-  return result
+  const { email, name, password, isBlocked} = payload;
+  const isUserExist = await User.findOne({ email });
+  if (isUserExist) {
+    throw new Error('User is already Exist try another email or Login!');
+  }
+
+  // Setting the ROLE to USER by default
+  const user = {
+    name: name,
+    email: email,
+    password: password,
+    role: "user",
+    isBlocked: isBlocked || false,
+  };
+
+
+  const result = await User.create(user);
+  return {
+    _id: result._id,
+    name: result.name, 
+    email: result.email,
+  };
 }
 
 const login = async (payload: { email: string; password: string }) => {
@@ -17,9 +38,9 @@ const login = async (payload: { email: string; password: string }) => {
   }
 
   // checking if the user is inactive
-  const userStatus = user?.userStatus
+  const isBlocked = user?.isBlocked
 
-  if (userStatus === 'inactive') {
+  if (isBlocked) {
     throw new Error('This user is blocked ! !')
   }
 
@@ -37,11 +58,19 @@ const login = async (payload: { email: string; password: string }) => {
   const jwtPayload = {
     email: user?.email,
     role: user?.role,
+    isBlocked: user?.isBlocked,
   }
 
-  const token = jwt.sign(jwtPayload, "secret", { expiresIn: '1d' });
+  const token = jwt.sign(jwtPayload, config.jwt_secret as string, { expiresIn: '1d' });
 
-  return {token, user};
+  // Logged In USER 
+  const loggedInUser = {
+    name: user?.name,
+    email: user?.email,
+    role: user?.role,
+    isBlocked: user?.isBlocked,
+  }
+  return {token, loggedInUser};
 }
 
 export const AuthService = {

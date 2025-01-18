@@ -1,12 +1,7 @@
 import { IUser } from './user.interface'
 import User from './user.model'
 
-const createUser = async (payload: IUser): Promise<IUser> => {
-  payload.role = 'admin';
-  const result = await User.create(payload)
 
-  return result
-}
 
 const getUser = async () => {
   const result = await User.find()
@@ -31,7 +26,6 @@ const deleteUser = async (id: string) => {
 }
 
 export const userService = {
-  createUser,
   getUser,
   getSingleUser,
   updateUser,
