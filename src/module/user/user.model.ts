@@ -1,56 +1,62 @@
-import { model, Schema } from 'mongoose'
-import { IUser } from './user.interface'
+import { model, Schema } from "mongoose";
+import { IUser } from "./user.interface";
+import config from "../../config";
+import bcrypt from "bcrypt";
 
 const userSchema = new Schema<IUser>({
   name: {
     type: String,
-    required: [true, 'Please provide your name'],
-    minlength: 3,
-    maxlength: 50,
+    required: [true, "Please provide your name"],
   },
-  age: { type: Number, required: [true, 'Please enter your age'] },
   email: {
     type: String,
-    required: [true, 'Please provide your email'],
+    required: [true, "Please provide your email"],
     unique: true,
     validate: {
       validator: function (value: string) {
-        return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(value)
+        return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(value);
       },
-      message: '{VALUE} is not a valid email',
+      message: "{VALUE} is not a valid email"
     },
-    immutable: true,
+    immutable: true
   },
-  photo: String,
+  password: {
+    type: String,
+    required: true,
+    select: false
+  },
+
   role: {
     type: String,
     enum: {
-      values: ['user', 'admin'],
-      message: '{VALUE} is not valid, please provide a valid role',
+      values: ["user", "admin"],
+      message: "{VALUE} is not valid, please provide a valid role"
     },
-    default: 'user',
-    required: true,
+    default: "user",
+    required: true
   },
-  userStatus: {
-    type: String,
-    enum: ['active', 'inactive'],
-    required: true,
-    default: 'active',
-  },
-})
+  isBlocked: {
+    type: Boolean,
+    default: false
+  }
+});
 
-// hook -> pre
-// userSchema.pre('find', function (this, next) {
-//   this.find({ userStatus: { $eq: 'active' } })
-//   next()
-// })
+userSchema.pre("save", async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this; // doc
 
-// userSchema.post('find', function (docs, next) {
-//   docs.forEach((doc: IUser) => {
-//     doc.name = doc.name.toUpperCase()
-//   })
-//   next()
-// })
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_rounds)
+  );
 
-const User = model<IUser>('User', userSchema)
-export default User
+  next();
+});
+
+userSchema.post("save", function (doc, next) {
+  doc.password = "";
+  next();
+});
+
+const User = model<IUser>("User", userSchema);
+export default User;

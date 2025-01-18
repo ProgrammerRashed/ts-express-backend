@@ -1,8 +1,11 @@
+import { USER_ROLE } from "./user.constants"
+
 export interface IUser {
   name: string
-  age: number
   email: string
-  photo?: string | null
+  password: string
   role: 'user' | 'admin'
-  userStatus: 'active' | 'inactive'
+  isBlocked: boolean
 }
+
+export type TUserRole = keyof typeof USER_ROLE;

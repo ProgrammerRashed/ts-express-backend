@@ -2,6 +2,7 @@ import { IUser } from './user.interface'
 import User from './user.model'
 
 const createUser = async (payload: IUser): Promise<IUser> => {
+  payload.role = 'admin';
   const result = await User.create(payload)
 
   return result
@@ -13,7 +14,6 @@ const getUser = async () => {
 }
 
 const getSingleUser = async (id: string) => {
-  //   const result = await User.findOne({name:"habi jabi"})
   const result = await User.findById(id)
   return result
 }
