@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { userController } from './user.controller'
-import { UserValidation } from './userValidation'
+import { UserValidation } from './user.validation'
 import validateRequest from '../../middlewares/validateRequest'
 import auth from '../../middlewares/auth'
 import { USER_ROLE } from './user.constants'
@@ -11,6 +11,6 @@ userRouter.post('/create-admin', validateRequest(UserValidation.userValidationSc
 userRouter.get('/:userId', userController.getSingleUser)
 userRouter.put('/:userId', userController.updateUser)
 userRouter.delete('/:userId', userController.deleteUser)
-userRouter.get('/',auth(USER_ROLE.admin, USER_ROLE.user), userController.getUser)
+userRouter.get('/', auth(USER_ROLE.admin, USER_ROLE.user), userController.getUser)
 
 export default userRouter
