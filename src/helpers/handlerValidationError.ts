@@ -12,7 +12,6 @@ export const handleValidationError = (err: any, res: Response) => {
         }
     });
 
-
     res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message: err.message,

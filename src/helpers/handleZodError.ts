@@ -11,13 +11,12 @@ export const handlerZodError = (err: any, res: Response) => {
             message: item.message
         }
     });
-
   res.status(StatusCodes.BAD_REQUEST).json({
          success: false,
          message: err.message,
          statusCode: StatusCodes.BAD_REQUEST,
          error: {
-             issues, err
+             issues, err 
          },
          stack: config.nodeEnv === "development" ? err.stack : null,
      })

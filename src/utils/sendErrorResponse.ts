@@ -12,19 +12,25 @@ type TErrorResponse = {
 };
 
 
-const sendErrorResponse = (res: Response, err: any): void => {
+const sendErrorResponse = (err: any, res: Response): void => {
   const statusCode = err.statusCode || StatusCodes.BAD_REQUEST;
   const message = err.message || "An unexpected error occurred";
+  const errorDetails = {
+    err: config.nodeEnv === "development" ? err.stack : null,
+    message: err.message,
+    name: err.name
+  };
 
   const response: TErrorResponse = {
     success: false,
     message,
     statusCode,
-    error: err,
+    error: errorDetails,
     stack: config.nodeEnv === "development" ? err.stack : null,
   };
 
   res.status(statusCode).json(response);
 };
 
-export default sendErrorResponse;
+
+export default sendErrorResponse

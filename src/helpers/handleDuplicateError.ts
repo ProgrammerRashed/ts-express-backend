@@ -3,6 +3,6 @@ import { Response } from "express"
 import sendErrorResponse from "../utils/sendErrorResponse"
 
 export const handlerDuplicateError = (err: any, res: Response) => {
-    sendErrorResponse(res, err)
+    sendErrorResponse(err, res)
 
 } 

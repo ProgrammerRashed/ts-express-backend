@@ -9,12 +9,12 @@ type TSuccessResponse<T> = {
 }
 
 const sendResponse = <T>(res: Response, data: TSuccessResponse<T>) => {
+  const responseData = data.token ? { ...data.data, token: data.token } : data.data;
   res.status(data.statusCode).json({
     success: true,
     statusCode: data.statusCode,
     message: data.message,
-    token:data.token,
-    data: data.data,
+    data: responseData,
   })
 }
 
