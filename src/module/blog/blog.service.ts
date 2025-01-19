@@ -4,6 +4,7 @@ import Blog from './blog.model'
 
 
 const createBlog = async (payload: IBlog) => {
+
   const data = new Blog(payload)
   const result = await data.save()
   return result

@@ -9,12 +9,12 @@ const blogValidationSchema = z.object({
     .string({
       required_error: 'Password is required for your safety',
     }),
-    author: z.string({
-        required_error: "Author must be provided and must be a string",
-    }),
-    isBlocked: z.boolean({
-        required_error: 'IsBlocked must be provided and must be a boolean',
-    })
+    // author: z.string({
+    //     required_error: "Author must be provided and must be a string",
+    // }),
+    // isPublished: z.boolean({
+    //     required_error: 'IsBlocked must be provided and must be a boolean',
+    // })
    })
 })
 
