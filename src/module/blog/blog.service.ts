@@ -11,10 +11,12 @@ const createBlog = async (payload: IBlog) => {
 }
 
 const getBlogs = async (query: Record<string, unknown> ) => {
-  const searchableFields = ["name", "startLocation", "locations"];
-  const tours = new QueryBuilder(Blog.find(), query).search(searchableFields).filter().sort().paginate().select();
+  const searchableFields = ["title", "content"];
+  console.log(query)
+  console.log(searchableFields)
+  const blogs = new QueryBuilder(Blog.find(), query).search(searchableFields).filter().sort().paginate().select();
 
-  const result = await tours.modelQuery;
+  const result = await blogs.modelQuery;
   return result;
 }
 

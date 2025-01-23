@@ -9,107 +9,113 @@ import { IBlog } from "./blog.interface";
 
 const createBlog = catchAsync(async (req: Request, res: Response) => {
   const loggedUserData = await getLoggedUser(req);
-  if (!loggedUserData || !(loggedUserData as LoggedUser)._id) {
-
-    throw new Error("User not authenticated or invalid user data");
-  }
   const loggedUser: LoggedUser = loggedUserData as LoggedUser;
+
   const blogDetails = {
     title: req.body.title,
     content: req.body.content,
     author: loggedUser?._id,
     isPublished: true
   };
-  const result:IBlog = await blogServices.createBlog(blogDetails);
-  const cleanResult:IBlog= {
+  const result: IBlog = await blogServices.createBlog(blogDetails);
+  const cleanResult: IBlog = {
     _id: result._id,
     title: result.title,
     content: result.content,
     author: result.author,
-    isPublished: result.isPublished,
+    isPublished: result.isPublished
   };
 
   sendResponse(res, {
+    success: true,
     statusCode: StatusCodes.CREATED,
-    message: 'Blog Created Successfully',
-    data: cleanResult,
-  })
-})
+    message: "Blog Created Successfully",
+    data: cleanResult
+  });
+});
 
-const getBlogs = async (req: Request, res: Response) => {
-  try {
-    const result = await blogServices.getBlogs(req.query);
+const getBlogs = catchAsync(async (req: Request, res: Response) => {
+  const result = await blogServices.getBlogs(req.query);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: "Blogs fetched successfully",
+    data: result
+  });
+});
 
-    res.send({
-      success: true,
-      message: "Tours get successfully",
-      result
-    });
-  } catch (error) {
-    res.send({
-      success: false,
-      message: "Something went wrong",
-      error
-    });
+const getSingleBlog = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const result = await blogServices.getSingleBlog(id);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: "Blog fetched successfully",
+    data: result
+  });
+});
+
+const updateBlog = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const body = req.body;
+
+  const loggedUserData = await getLoggedUser(req);
+  const loggedUser: LoggedUser = loggedUserData as LoggedUser;
+  const currentBlog = await blogServices.getSingleBlog(id);
+
+  if (!currentBlog) {
+    throw new Error("Blog not found");
   }
-};
-
-const getSingleBlog = async (req: Request, res: Response) => {
-  try {
-    const id = req.params.id;
-    const result = await blogServices.getSingleBlog(id);
-
-    res.send({
-      success: true,
-      message: "Tour get successfully",
-      result
-    });
-  } catch (error) {
-    res.send({
-      success: false,
-      message: "Something went wrong",
-      error
-    });
+  
+  const hasUpdatePermission =loggedUser._id.equals(currentBlog.author);
+  
+  if (!hasUpdatePermission) {
+    const error = new Error("You do not have permission to update this blog");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (error as any).statusCode = StatusCodes.UNAUTHORIZED;
+    throw error;
   }
-};
 
-const updateBlog = async (req: Request, res: Response) => {
-  try {
-    const id = req.params.id;
-    const body = req.body;
-    const result = await blogServices.updateBlog(id, body);
+  const result = await blogServices.updateBlog(id, body);
 
-    res.send({
-      success: true,
-      message: "Tour updated successfully",
-      result
-    });
-  } catch (error) {
-    res.send({
-      success: false,
-      message: "Something went wrong",
-      error
-    });
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: "Blog updated successfully",
+    data: result
+  });
+});
+
+const deleteBlog = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const loggedUserData = await getLoggedUser(req);
+  const loggedUser: LoggedUser = loggedUserData as LoggedUser;
+  const currentBlog = await blogServices.getSingleBlog(id);
+
+  if (!currentBlog) {
+    throw new Error("Blog not found");
   }
-};
-const deleteBlog = async (req: Request, res: Response) => {
-  try {
-    const id = req.params.id;
-    const result = await blogServices.deleteBlog(id);
-
-    res.send({
-      success: true,
-      message: "Tour deleted successfully",
-      result
-    });
-  } catch (error) {
-    res.send({
-      success: false,
-      message: "Something went wrong",
-      error
-    });
+  
+  const hasDeletePermission =
+    loggedUser._id.equals(currentBlog.author) || loggedUser.role === "admin";
+  
+  if (!hasDeletePermission) {
+    const error = new Error("You do not have permission to delete this blog");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (error as any).statusCode = StatusCodes.UNAUTHORIZED;
+    throw error;
   }
-};
+
+
+  const result = await blogServices.deleteBlog(id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: "Blog deleted successfully",
+    data: result
+  });
+});
 
 export const blogController = {
   createBlog,

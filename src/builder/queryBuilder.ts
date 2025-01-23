@@ -9,12 +9,12 @@ class QueryBuilder<T> {
   }
 
   search(searchableFields: string[]) {
-    const searchTerm = this?.query?.searchTerm
-    if(searchTerm){
+    const search = this?.query?.search as string
+    if(search){
       this.modelQuery = this.modelQuery.find({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         $or: searchableFields.map((field: any) => ({
-          [field]: { $regex: searchTerm, $options: 'i' },
+          [field]: { $regex: search, $options: 'i' },
         })),
       } as FilterQuery<T>)
     }
@@ -25,7 +25,7 @@ class QueryBuilder<T> {
   filter() {
     const queryObj = { ...this.query }
     const excludingImportant = [
-      'searchTerm',
+      'search',
       'page',
       'limit',
       'sortOrder',
@@ -33,7 +33,6 @@ class QueryBuilder<T> {
       'fields',
     ]
 
-    // jesob field amdr filtering a drkr nei sesob baad dicchi
     excludingImportant.forEach((key) => delete queryObj[key])
 
     this.modelQuery = this.modelQuery.find(queryObj);
@@ -58,7 +57,6 @@ class QueryBuilder<T> {
     if (this?.query?.sortBy && this?.query?.sortOrder) {
       const sortBy = this?.query?.sortBy
       const sortOrder = this?.query?.sortOrder
-      // "-price" othoba "price"
       sortStr = `${sortOrder === 'desc' ? '-' : ''}${sortBy}`
     }
 
