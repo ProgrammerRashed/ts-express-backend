@@ -13,7 +13,7 @@ const getSingleUser = async (id: string) => {
   return result
 }
 
-const updateUser = async (id: string, data: IUser) => {
+const updateUser = async (id: string, data: Partial<IUser>) => {
   const result = await User.findByIdAndUpdate(id, data, {
     new: true,
   })

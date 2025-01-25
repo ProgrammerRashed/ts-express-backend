@@ -11,8 +11,8 @@ const app = express()
 app.use(express.json())
 
 app.use('/api/auth', authRouter)
-app.use('/api/user', userRouter)
-app.use('/api/blogs', blogRouter)
+app.use('/api', userRouter)
+app.use('/api', blogRouter)
 
 app.get('/', (req: Request, res: Response) => {
   res.send({
