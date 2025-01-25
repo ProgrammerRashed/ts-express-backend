@@ -6,7 +6,6 @@ import { USER_ROLE } from './user.constants'
 const userRouter = Router()
 
 userRouter.get('/user/:userId', userController.getSingleUser)
-userRouter.put('/user/:userId', userController.updateUser)
 userRouter.patch('/admin/users/:userId/block', auth(USER_ROLE.admin), userController.updateUser)
 userRouter.get('/users', auth(USER_ROLE.admin, USER_ROLE.user), userController.getUser)
 

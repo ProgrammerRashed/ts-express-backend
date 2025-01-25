@@ -19,7 +19,7 @@ const blogSchema = new Schema<IBlog>({
     type: Boolean,
     default: false,
   },
-})
+}, { timestamps: true })
 
 const Blog = model<IBlog>('Blog', blogSchema)
 
